@@ -1,5 +1,5 @@
 # HandSign 
 HandSign is a flutter application which helps you to recognise the hand sign language using image classification
 
-## Screenshots of the App: 
-<img src=https://user-images.githubusercontent.com/59571953/107137887-adcd5e80-6936-11eb-9ab3-a6aa14f12336.jpeg" width="200" height="200">
+## Screenshots of the App:  
+<img src="https://user-images.githubusercontent.com/59571953/107137887-adcd5e80-6936-11eb-9ab3-a6aa14f12336.jpeg" width="200" height="400">
