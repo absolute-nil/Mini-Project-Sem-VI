@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:handsign/presentation/screen/main_screen.dart';
+import 'package:camera/camera.dart';
 
-void main() {
-  runApp(MyApp());
-}
+List<CameraDescription> cameras;
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      darkTheme: ThemeData.dark(),
-      home: MainScreen(),
-    );
+Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    cameras = await availableCameras();
+  } on CameraException catch (e) {
+    print('Error: $e.code\nError Message: $e.message');
   }
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      darkTheme: ThemeData.light(),
+      home: MainScreen(
+        cameras: cameras,
+      ),
+    ),
+  );
 }
