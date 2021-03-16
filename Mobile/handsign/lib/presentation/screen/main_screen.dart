@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:handsign/core/animations/animated_background.dart';
 import 'package:handsign/core/animations/fadein.dart';
+import 'package:handsign/presentation/screen/camera.dart';
 
 class MainScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -48,7 +49,33 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                         child: FittedBox(
                           child: RaisedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (context, _, __) => CameraScreen(
+                                    cameras: widget.cameras,
+                                  ),
+                                  opaque: true,
+                                  transitionDuration:
+                                      Duration(milliseconds: 300),
+                                  reverseTransitionDuration: Duration(
+                                    milliseconds: 200,
+                                  ),
+                                  transitionsBuilder: (BuildContext context,
+                                      Animation<double> animation,
+                                      Animation<double> secondaryAnimation,
+                                      Widget child) {
+                                    return SlideTransition(
+                                      position: new Tween<Offset>(
+                                        begin: const Offset(1.0, 0.0),
+                                        end: Offset.zero,
+                                      ).animate(animation),
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(80.0)),
                             padding: EdgeInsets.all(0.0),
