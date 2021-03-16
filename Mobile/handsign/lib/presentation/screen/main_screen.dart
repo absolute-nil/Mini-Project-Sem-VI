@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
                     height: 330,
                     width: 200,
                     child: Image.asset(
-                      "assets/app_logo_v2__1_-removebg-preview.png",
+                      "assets/app_logo.png",
                       fit: BoxFit.contain,
                     ),
                   ),
