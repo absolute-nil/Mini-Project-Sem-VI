@@ -4,7 +4,13 @@ from camera.camera_helper import WebCam
 import time
 
 def index(request):
-    return render(request, 'index.html')
+	context = {'switch':False}
+	if request.method=='GET':
+		if 'btn' in request.GET:
+			switch = request.GET['btn']
+			if switch=='turn-on':
+				context['switch'] = True
+	return render(request, 'index.html', context)
 
 def gen(camera):
 	end_time = time.time() + 5

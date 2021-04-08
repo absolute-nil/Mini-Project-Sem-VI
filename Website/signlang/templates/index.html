@@ -16,13 +16,36 @@
             color: white;
             font-family: 'Comfortaa', cursive;
         }
+        .btn{
+            -webkit-border-radius: 10;
+            -moz-border-radius: 10;
+            border-radius: 10px;
+            color: #000000;
+            font-size: 23px;
+            padding: 11px;
+            background: #fff700;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #00ff09;
+            text-decoration: none;
+            }
     </style>
 </head>
 <body>
     
     <div class="container my-5 text-center">
-        <h1 class="mb-5 font-weight-bold">Sign Language Detection</h1>
-        <img class="img-thumbnail" src="{% url 'video_feed' %}">
+        <h1 class="mb-5 font-weight-bold">Gesture Talk - Sign Language Detection</h1>
+        {% if switch %}
+            <img class="img-thumbnail" src="{% url 'video_feed' %}">
+            <form action='/' method='GET'>
+                <button type='submit' class='btn' value='turn-off' name='btn' id='btn'>Turn Off</button>
+            </form>
+        {% else %}
+        <form action='/' method='GET'> 
+            <button type='submit' class='btn' value='turn-on' name="btn" id='btn'>Turn on</button>
+        </form>
+        {% endif %}
     </div>
     
 
