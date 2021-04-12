@@ -1,6 +1,6 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:handsign/presentation/screen/main_screen.dart';
-import 'package:camera/camera.dart';
 
 List<CameraDescription> cameras;
 
@@ -15,7 +15,7 @@ Future<Null> main() async {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData.light(),
-      home: MainScreen(
+      home: HomePage(
         cameras: cameras,
       ),
     ),
