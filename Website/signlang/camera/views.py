@@ -23,3 +23,7 @@ def gen(camera):
 def video_feed(request):
 	return StreamingHttpResponse(gen(WebCam()),
 					content_type='multipart/x-mixed-replace; boundary=frame')
+
+def tester(request):
+	return render(request, 'tester.html')
+	#saved_model = tf.keras.models.load_model('Alphabet Classifier With Preprocessing')
