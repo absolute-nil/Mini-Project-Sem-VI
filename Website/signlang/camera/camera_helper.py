@@ -19,15 +19,8 @@ class WebCam(object):
         crop_img = image_flip[y:y + h, x:x + w]
         self.img_list.append(crop_img)
         ret, jpeg = cv2.imencode('.jpg', image_flip)
-<<<<<<< HEAD
-        path = os.getcwd() + "\camera\images" + "\image.jpg"
-||||||| f4a01d0
-        path = os.getcwd() + "\camera\images" + "\image.jpg"
-        print(path)
-=======
         path = os.getcwd() + "\camera\images" + "\image{}.jpg".format(self.counter)
         self.counter += 1
         print(path)
->>>>>>> b22f6c5b65400b116425e56aaec2940c654fa83d
         cv2.imwrite(path, crop_img)
         return jpeg.tobytes()
