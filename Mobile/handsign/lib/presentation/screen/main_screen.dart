@@ -1,19 +1,43 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:handsign/core/animations/animated_background.dart';
 import 'package:handsign/core/animations/fadein.dart';
 import 'package:handsign/presentation/screen/camera.dart';
+import 'package:tflite/tflite.dart';
 
-class MainScreen extends StatefulWidget {
+class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;
 
-  const MainScreen({Key key, @required this.cameras}) : super(key: key);
-
+  const HomePage({Key key, this.cameras}) : super(key: key);
   @override
-  _MainScreenState createState() => _MainScreenState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _HomePageState extends State<HomePage> {
+  final FlutterTts flutterTts = FlutterTts();
+
+  @override
+  void initState() {
+    super.initState();
+    loadModel().then((val) {
+      setState(() {});
+    });
+    _speak();
+  }
+
+  Future _speak() async {
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setPitch(0.9);
+    await flutterTts.speak("We hope you enjoy our app");
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Tflite.close();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -26,7 +50,7 @@ class _MainScreenState extends State<MainScreen> {
                 slivers: [
                   SliverToBoxAdapter(
                     child: FadeIn(
-                      delay: 10.0,
+                      delay: 0,
                       duration: Duration(seconds: 1),
                       child: Container(
                         height: 330,
@@ -40,7 +64,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   SliverToBoxAdapter(
                     child: FadeIn(
-                      delay: 12.0,
+                      delay: 6.0,
                       duration: Duration(seconds: 1),
                       child: Container(
                         height: 50.0,
@@ -50,31 +74,28 @@ class _MainScreenState extends State<MainScreen> {
                         child: FittedBox(
                           child: RaisedButton(
                             onPressed: () {
-                              Navigator.of(context).push(
-                                PageRouteBuilder(
-                                  pageBuilder: (context, _, __) => CameraScreen(
-                                    cameras: widget.cameras,
-                                  ),
-                                  opaque: true,
-                                  transitionDuration:
-                                      Duration(milliseconds: 300),
-                                  reverseTransitionDuration: Duration(
-                                    milliseconds: 200,
-                                  ),
-                                  transitionsBuilder: (BuildContext context,
-                                      Animation<double> animation,
-                                      Animation<double> secondaryAnimation,
-                                      Widget child) {
-                                    return SlideTransition(
-                                      position: new Tween<Offset>(
-                                        begin: const Offset(1.0, 0.0),
-                                        end: Offset.zero,
-                                      ).animate(animation),
-                                      child: child,
-                                    );
-                                  },
+                              Navigator.of(context).push(PageRouteBuilder(
+                                pageBuilder: (context, _, __) => CameraScreen(
+                                  cameras: widget.cameras,
                                 ),
-                              );
+                                opaque: true,
+                                transitionDuration: Duration(milliseconds: 500),
+                                reverseTransitionDuration: Duration(
+                                  milliseconds: 400,
+                                ),
+                                transitionsBuilder: (BuildContext context,
+                                    Animation<double> animation,
+                                    Animation<double> secondaryAnimation,
+                                    Widget child) {
+                                  return SlideTransition(
+                                    position: new Tween<Offset>(
+                                      begin: const Offset(1.0, 0.0),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  );
+                                },
+                              ));
                             },
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(80.0)),
@@ -124,7 +145,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   SliverToBoxAdapter(
                     child: FadeIn(
-                      delay: 12,
+                      delay: 0,
                       duration: Duration(milliseconds: 800),
                       child: Container(
                         margin: EdgeInsets.only(
@@ -159,5 +180,18 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
     );
+  }
+
+  loadModel() async {
+    try {
+      await Tflite.loadModel(
+        model: 'assets/Alphabet_Classifier_Lite.tflite',
+        labels: "assets/labels.txt",
+      );
+      print("Loaded");
+    } catch (e) {
+      // print(e);
+      print("ERROR");
+    }
   }
 }

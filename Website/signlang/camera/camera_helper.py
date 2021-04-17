@@ -5,6 +5,8 @@ import os
 class WebCam(object):
     def __init__(self):
         self.video = cv2.VideoCapture(0)
+        self.img_list = []
+        self.counter = 0
 
     def __del__(self):
         self.video.release()
@@ -15,7 +17,17 @@ class WebCam(object):
         x, y, w, h = 375, 100, 245, 260
         cv2.rectangle(image_flip, (x, y), (x + w, y + h), (0, 255, 0), 3)
         crop_img = image_flip[y:y + h, x:x + w]
+        self.img_list.append(crop_img)
         ret, jpeg = cv2.imencode('.jpg', image_flip)
+<<<<<<< HEAD
         path = os.getcwd() + "\camera\images" + "\image.jpg"
+||||||| f4a01d0
+        path = os.getcwd() + "\camera\images" + "\image.jpg"
+        print(path)
+=======
+        path = os.getcwd() + "\camera\images" + "\image{}.jpg".format(self.counter)
+        self.counter += 1
+        print(path)
+>>>>>>> b22f6c5b65400b116425e56aaec2940c654fa83d
         cv2.imwrite(path, crop_img)
         return jpeg.tobytes()
