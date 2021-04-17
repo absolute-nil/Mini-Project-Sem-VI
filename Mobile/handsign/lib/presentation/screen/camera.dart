@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
+
+// import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:handsign/core/animations/fadein.dart';
 import 'package:handsign/domain/entity/response_entity.dart';
-import 'package:image/image.dart' as imglib;
+// import 'package:image/image.dart' as imglib;
 import 'package:tflite/tflite.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -44,18 +44,20 @@ class _CameraScreenState extends State<CameraScreen> {
         setState(() {});
 
         cameraController.startImageStream((CameraImage img) async {
-          return;
           if (!isStart) return;
           if (!isDetecting) {
             isDetecting = true;
 
-            imglib.Image base = _convertBGRA8888(img, 0);
-
-            Tflite.runModelOnBinary(
-              binary: base.getBytes(format: imglib.Format.luminance),
+            Tflite.runModelOnFrame(
+              bytesList: img.planes.map((plane) {
+                return plane.bytes;
+              }).toList(),
+              imageHeight: img.height,
+              imageWidth: img.width,
               asynch: true,
             ).then((recognitions) {
               print(recognitions);
+              // return;
               if (!mounted) return;
               if (!isStart) {
                 isDetecting = false;
@@ -70,7 +72,6 @@ class _CameraScreenState extends State<CameraScreen> {
                 ));
               }
               if (responses.length < len) {
-                // return;
               } else if (responses.length % len == 0) {
                 int pos = responses.length - 1;
                 Map<String, int> map = {};
@@ -192,17 +193,6 @@ class _CameraScreenState extends State<CameraScreen> {
             }),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height / 2 - 256,
-            left: MediaQuery.of(context).size.width / 5,
-            child: Container(
-              height: 256,
-              width: 256,
-              decoration: BoxDecoration(
-                color: Colors.white.withAlpha(100),
-              ),
-            ),
-          ),
-          Positioned(
               right: 10,
               top: MediaQuery.of(context).size.height / 2,
               child: buttons()),
@@ -249,87 +239,87 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 
-  Uint8List preProcessedImageData(CameraImage camImg) {
-    final rawRgbImage = convertYUV420toImageColor(camImg);
-    final rgbImage = Platform.isAndroid
-        ? imglib.copyRotate(
-            rawRgbImage,
-            90,
-          )
-        : rawRgbImage;
-    return imglib
-        .copyResize(rgbImage, width: 64, height: 64)
-        .getBytes(format: imglib.Format.rgb);
-  }
+  // Uint8List preProcessedImageData(CameraImage camImg) {
+  //   final rawRgbImage = convertYUV420toImageColor(camImg);
+  //   final rgbImage = Platform.isAndroid
+  //       ? imglib.copyRotate(
+  //           rawRgbImage,
+  //           90,
+  //         )
+  //       : rawRgbImage;
+  //   return imglib
+  //       .copyResize(rgbImage, width: 64, height: 64)
+  //       .getBytes(format: imglib.Format.rgb);
+  // }
 
-  imglib.Image convertYUV420toImageColor(CameraImage image) {
-    final int width = image.width;
-    final int height = image.height;
-    final int uvRowStride = image.planes[1].bytesPerRow;
-    final int uvPixelStride = image.planes[1].bytesPerPixel;
+  // imglib.Image convertYUV420toImageColor(CameraImage image) {
+  //   final int width = image.width;
+  //   final int height = image.height;
+  //   final int uvRowStride = image.planes[1].bytesPerRow;
+  //   final int uvPixelStride = image.planes[1].bytesPerPixel;
 
-    const alpha255 = (0xFF << 24);
+  //   const alpha255 = (0xFF << 24);
 
-    final img = imglib.Image(width, height); // Create Image buffer
+  //   final img = imglib.Image(width, height); // Create Image buffer
 
-    for (int x = 0; x < width; x++) {
-      for (int y = 0; y < height; y++) {
-        final int uvIndex =
-            uvPixelStride * (x / 2).floor() + uvRowStride * (y / 2).floor();
-        final int index = y * width + x;
+  //   for (int x = 0; x < width; x++) {
+  //     for (int y = 0; y < height; y++) {
+  //       final int uvIndex =
+  //           uvPixelStride * (x / 2).floor() + uvRowStride * (y / 2).floor();
+  //       final int index = y * width + x;
 
-        final yp = image.planes[0].bytes[index];
-        final up = image.planes[1].bytes[uvIndex];
-        final vp = image.planes[2].bytes[uvIndex];
-        // Calculate pixel color
-        int r = (yp + vp * 1436 / 1024 - 179).round().clamp(0, 255);
-        int g = (yp - up * 46549 / 131072 + 44 - vp * 93604 / 131072 + 91)
-            .round()
-            .clamp(0, 255);
-        int b = (yp + up * 1814 / 1024 - 227).round().clamp(0, 255);
-        // color: 0x FF  FF  FF  FF
-        //           A   B   G   R
-        img.data[index] = alpha255 | (b << 16) | (g << 8) | r;
-      }
-    }
-    return img;
-  }
+  //       final yp = image.planes[0].bytes[index];
+  //       final up = image.planes[1].bytes[uvIndex];
+  //       final vp = image.planes[2].bytes[uvIndex];
+  //       // Calculate pixel color
+  //       int r = (yp + vp * 1436 / 1024 - 179).round().clamp(0, 255);
+  //       int g = (yp - up * 46549 / 131072 + 44 - vp * 93604 / 131072 + 91)
+  //           .round()
+  //           .clamp(0, 255);
+  //       int b = (yp + up * 1814 / 1024 - 227).round().clamp(0, 255);
+  //       // color: 0x FF  FF  FF  FF
+  //       //           A   B   G   R
+  //       img.data[index] = alpha255 | (b << 16) | (g << 8) | r;
+  //     }
+  //   }
+  //   return img;
+  // }
 
-  imglib.Image _convertBGRA8888(CameraImage image, int index) {
-    var img = imglib.Image.fromBytes(
-      image.width,
-      image.height,
-      image.planes[index].bytes,
-      format: imglib.Format.luminance,
-    );
-    imglib.Image resizedImage = imglib.copyCrop(img, 20, 20, 512, 512);
-    return imglib.copyResize(
-      resizedImage,
-      width: 128,
-      height: 128,
-    );
-  }
+  // imglib.Image _convertBGRA8888(CameraImage image, int index) {
+  //   var img = imglib.Image.fromBytes(
+  //     image.width,
+  //     image.height,
+  //     image.planes[index].bytes,
+  //     format: imglib.Format.luminance,
+  //   );
+  //   imglib.Image resizedImage = imglib.copyCrop(img, 20, 20, 512, 512);
+  //   return imglib.copyResize(
+  //     resizedImage,
+  //     width: 128,
+  //     height: 128,
+  //   );
+  // }
 
-  Uint8List _convertYUV420(CameraImage image, int index) {
-    var img = imglib.Image(image.width, image.height);
+  // Uint8List _convertYUV420(CameraImage image, int index) {
+  //   var img = imglib.Image(image.width, image.height);
 
-    Plane plane = image.planes[index];
-    const int shift = (0xFF << 24);
+  //   Plane plane = image.planes[index];
+  //   const int shift = (0xFF << 24);
 
-    for (int x = 0; x < image.width; x++) {
-      for (int planeOffset = 0;
-          planeOffset < image.height * image.width;
-          planeOffset += image.width) {
-        final pixelColor = plane.bytes[planeOffset + x];
-        var newVal =
-            shift | (pixelColor << 16) | (pixelColor << 8) | pixelColor;
+  //   for (int x = 0; x < image.width; x++) {
+  //     for (int planeOffset = 0;
+  //         planeOffset < image.height * image.width;
+  //         planeOffset += image.width) {
+  //       final pixelColor = plane.bytes[planeOffset + x];
+  //       var newVal =
+  //           shift | (pixelColor << 16) | (pixelColor << 8) | pixelColor;
 
-        img.data[planeOffset + x] = newVal;
-      }
-    }
+  //       img.data[planeOffset + x] = newVal;
+  //     }
+  //   }
 
-    return imglib.copyResize(img, width: 32, height: 32).getBytes();
-  }
+  //   return imglib.copyResize(img, width: 32, height: 32).getBytes();
+  // }
 
   Future _speak(String str) async {
     if (!mounted) return;
