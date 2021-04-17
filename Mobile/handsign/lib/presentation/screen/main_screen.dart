@@ -20,9 +20,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // loadModel().then((val) {
-    //   setState(() {});
-    // });
+    loadModel().then((val) {
+      setState(() {});
+    });
     _speak();
   }
 
@@ -185,12 +185,10 @@ class _HomePageState extends State<HomePage> {
   loadModel() async {
     try {
       await Tflite.loadModel(
-        model: 'assets/Alphabet_Classifier_Preprocess_Gray_Lite.tflite',
+        model: 'assets/Alphabet_Classifier_Lite.tflite',
         labels: "assets/labels.txt",
-        // useGpuDelegate: true,
-        // isAsset: true,
-        // numThreads: 10,
       );
+      print("Loaded");
     } catch (e) {
       // print(e);
       print("ERROR");
