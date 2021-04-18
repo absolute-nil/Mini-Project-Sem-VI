@@ -1,6 +1,7 @@
 import cv2
 import os
 
+
 class WebCam(object):
     def __init__(self):
         self.video = cv2.VideoCapture(0)
