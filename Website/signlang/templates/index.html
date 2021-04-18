@@ -36,16 +36,17 @@
     
     <div class="container my-5 text-center">
         <h1 class="mb-5 font-weight-bold">Gesture Talk - Sign Language Detection</h1>
-        {% if switch %}
-            <img class="img-thumbnail" src="{% url 'video_feed' %}">
-            <form action='/' method='GET'>
+        <img class="img-thumbnail" src="{% url 'video_feed' %}">
+        <!-- {% if switch %} 
+            
+             <form action='/' method='GET'>
                 <button type='submit' class='btn' value='turn-off' name='btn' id='btn'>Turn Off</button>
-            </form>
-        {% else %}
+            </form> 
+         {% else %}
         <form action='/' method='GET'> 
             <button type='submit' class='btn' value='turn-on' name="btn" id='btn'>Turn on</button>
         </form>
-        {% endif %}
+        {% endif %} -->
     </div>
     
 
