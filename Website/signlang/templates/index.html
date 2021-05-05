@@ -29,28 +29,52 @@
         .btn:hover {
             background: #00ff09;
             text-decoration: none;
-            }
+        }
     </style>
 </head>
 <body>
     
     <div class="container my-5 text-center">
         <h1 class="mb-5 font-weight-bold">Gesture Talk - Sign Language Detection</h1>
-        <img class="img-thumbnail" src="{% url 'video_feed' %}">
-        <!-- {% if switch %} 
-            
-             <form action='/' method='GET'>
-                <button type='submit' class='btn' value='turn-off' name='btn' id='btn'>Turn Off</button>
-            </form> 
-         {% else %}
-        <form action='/' method='GET'> 
-            <button type='submit' class='btn' value='turn-on' name="btn" id='btn'>Turn on</button>
-        </form>
-        {% endif %} -->
+        <div class = "row">
+            <div class = "col-lg-8">
+                <img class="img-thumbnail" src="{% url 'video_feed' %}">
+            </div>
+            <div class = "col-lg-4">
+                <div class="alert alert-primary" role="alert">
+                    Please hold your hand inside the green box.
+                </div>
+                <h3 class="mt-5 text-warning"> Predicted Character</h3> 
+                <p id="displayCharacter"></id>
+
+                <h3 class="mt-5 text-success"> Predicted String</h3> 
+                <p id="displayString"></id>
+            </div>
+        </div>
     </div>
     
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    
+    <script>
+        $(document).ready(function() {
+            setInterval(function() {
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'getPredictions' %}",
+                    success: function(response) {
+                        document.getElementById("displayCharacter").innerHTML = response.predictedCharacter
+                        document.getElementById("displayString").innerHTML = response.predictedString
+                    },
+                    error: function(response) {
+                        console.log('No data found');
+                    }
+                });
+
+            }, 500);
+        });
+    </script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>

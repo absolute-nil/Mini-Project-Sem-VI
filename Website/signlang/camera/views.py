@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http.response import StreamingHttpResponse
+from django.http.response import StreamingHttpResponse, JsonResponse
 from camera.camera_helper import WebCam
 import time
 import tensorflow as tf
@@ -8,14 +8,17 @@ import cv2
 import os
 import statistics
 from statistics import mode
-  
-def most_common(List):
-    return(mode(List))
 
-wordFlag = 0
+#Global variables
+freq = []
+predictedString = ''
+predictedCharacter = ''
+nothingCtr = 0
 
+#Get TF lite model
 SIZE = 64, 64
 PATH = os.getcwd() + "\camera\Alphabet_Classifier__Preprocess_Lite.tflite"
+
 # Load TFLite model and allocate tensors.
 interpreter = tf.lite.Interpreter(PATH)
 interpreter.allocate_tensors()
@@ -24,8 +27,8 @@ interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
-predictedCharacter = '*'
 
+#index to character mapping
 map_idx_to_char = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F',
                    6: 'G', 7: 'H', 8: 'I', 9: 'J', 10: 'K', 11: 'L',
                    12: 'M', 13: 'N', 14: 'O', 15: 'P', 16: 'Q', 17: 'R',
@@ -33,22 +36,26 @@ map_idx_to_char = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F',
                    24: 'Y', 25: 'Z', 26: 'del', 27: 'nothing', 28: ' ',
                    29: 'other'}
 
+
+def most_common(List):
+    return(mode(List))
+
 def index(request):
-	""" context = {
-		'switch': False,
-		'predictedCharacter': predictedCharacter
-	}
-	if request.method=='GET':
-		if 'btn' in request.GET:
-			switch = request.GET['btn']
-			if switch=='turn-on':
-				context['switch'] = True """
 	return render(request, 'index.html')
 
+def getPredictions(image):
+	return JsonResponse({
+		'predictedCharacter': predictedCharacter,
+		'predictedString': predictedString
+	})
+
+
 def gen(camera):
-	freq = []
-	predictedString = ''
-	nothingCtr = 0
+	global freq
+	global predictedString
+	global predictedCharacter
+	global nothingCtr
+
 	while True:
 		frame, image = camera.get_frame()
 		predictedCharacter = prediction(image)
@@ -56,14 +63,12 @@ def gen(camera):
 			nothingCtr = 0
 			freq.append(predictedCharacter)
 			print(predictedCharacter)
-			#wordFlag = 1
 		else:
 			nothingCtr += 1
-			if nothingCtr==250:
+			if nothingCtr == 250:
 				break
 			if freq!=[]:
-				maxChar = most_common(freq)
-				predictedString += maxChar
+				predictedString += most_common(freq)
 				freq = []
 				print(predictedString)
 		yield (b'--frame\r\n'
