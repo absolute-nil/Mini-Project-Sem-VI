@@ -14,6 +14,7 @@ freq = []
 predictedString = ''
 predictedCharacter = ''
 nothingCtr = 0
+cameraStarted = False
 
 #Get TF lite model
 SIZE = 64, 64
@@ -41,7 +42,16 @@ def most_common(List):
     return(mode(List))
 
 def index(request):
-	return render(request, 'index.html')
+	global cameraStarted
+	global predictedString
+
+	if request.method == 'GET':
+		cameraStarted = False
+	else:
+		cameraStarted = not cameraStarted
+		predictedString = ''
+
+	return render(request, 'index.html', {'cameraStarted': cameraStarted})
 
 def getPredictions(image):
 	return JsonResponse({
