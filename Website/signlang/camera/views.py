@@ -13,7 +13,6 @@ from statistics import mode
 freq = []
 predictedString = ''
 predictedCharacter = ''
-nothingCtr = 0
 cameraStarted = False
 
 #Get TF lite model
@@ -37,10 +36,11 @@ map_idx_to_char = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F',
                    24: 'Y', 25: 'Z', 26: 'del', 27: 'nothing', 28: ' ',
                    29: 'other'}
 
-
+#Return most common character from list
 def most_common(List):
     return(mode(List))
 
+#Index page, endpoint for Ajax request
 def index(request):
 	global cameraStarted
 	global predictedString
@@ -59,12 +59,11 @@ def getPredictions(image):
 		'predictedString': predictedString
 	})
 
-
+#To generate camera image and make predictions
 def gen(camera):
 	global freq
 	global predictedString
 	global predictedCharacter
-	global nothingCtr
 
 	while True:
 		frame, image = camera.get_frame()
@@ -72,15 +71,10 @@ def gen(camera):
 		if predictedCharacter!='nothing':
 			nothingCtr = 0
 			freq.append(predictedCharacter)
-			print(predictedCharacter)
 		else:
-			nothingCtr += 1
-			if nothingCtr == 250:
-				break
-			if freq!=[]:
+			if freq != []:
 				predictedString += most_common(freq)
 				freq = []
-				print(predictedString)
 		yield (b'--frame\r\n'
 				b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 	return redirect('index.html')
@@ -90,8 +84,6 @@ def video_feed(request):
 	return StreamingHttpResponse(gen(WebCam()),
 					content_type='multipart/x-mixed-replace; boundary=frame')
 
-def tester(request):
-	return render(request, 'tester.html?btn=turn-off')
 
 def prediction(image):
 	

@@ -45,7 +45,7 @@
             </div>
             <div class = "col-lg-4">
                 <div class="alert alert-primary" role="alert">
-                    Please hold your hand inside the green box, once you Turn On the camera!
+                    Please press the Turn On button to start prediction of sign language.
                 </div>
                 <h3 class="mt-5 text-warning"> Predicted Character</h3> 
                 <p id="displayCharacter">None</id>
@@ -55,7 +55,7 @@
                 
                 <form action='/' method='POST'>
                     {% csrf_token %}
-                    <button class='btn btn-lg btn-primary mt-5' value='turn-on' name='btn' id='btn'>Turn On</button>
+                    <button class='btn btn-lg btn-primary mt-5' name='btn' id='btn'>Turn On</button>
                 </form>
                 
             </div>
@@ -77,14 +77,14 @@
 
                 <form action='/' method='POST'>
                     {% csrf_token %}
-                    <button class='btn btn-lg btn-primary mt-5' value='turn-off' name='btn' id='btn'>Turn Off</button>
+                    <button class='btn btn-lg btn-primary mt-5' name='btn' id='btn'>Turn Off</button>
                 </form>
             </div>
         </div>
         {% endif %}
     </div>
     
-
+    
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     
     {% if cameraStarted %}
