@@ -26,7 +26,7 @@ SECRET_KEY = '(_*f+z2usrbcs@fpwbxo)l330vf&t1=+nm1y#md!!+)cx3p)el'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://sign-lang-detection.herokuapp.com/']
 
 
 # Application definition
@@ -107,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
