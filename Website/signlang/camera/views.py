@@ -73,7 +73,11 @@ def gen(camera):
 			freq.append(predictedCharacter)
 		else:
 			if freq != []:
-				predictedString += most_common(freq)
+				mc = most_common(freq)
+				if mc=='del':
+					predictedString = predictedString[:-1]
+				else:
+					predictedString += mc
 				freq = []
 		yield (b'--frame\r\n'
 				b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
